@@ -34,6 +34,7 @@ from __future__ import absolute_import
 import os
 import zipfile
 import xml.etree.ElementTree as etree
+from datetime import datetime
 from io import BytesIO
 
 if __name__ == '__main__':
@@ -85,6 +86,12 @@ class DocutilsOdtTestCase(DocutilsTestSupport.StandardTestCase):
             len(content2), len(content1), )
         self.assertEqual(content1, content2, msg)
 
+        meta1 = self.extract_file(result, 'meta.xml')
+        meta2 = self.extract_file(expected, 'meta.xml')
+        msg = 'meta.xml not equal: expected len: %d  actual len: %d' % (
+            len(meta2), len(meta1),)
+        self.assertEqual(meta1, meta2, msg)
+
     def reorder_attributes(self, root):
         """
         Make attribute order independent of python version. 
@@ -122,6 +129,18 @@ class DocutilsOdtTestCase(DocutilsTestSupport.StandardTestCase):
         DocutilsTestSupport.StandardTestCase.assertEqual(self,
             first, second, msg2)
 
+    def set_datetime(self, iso8601):
+        def cleanup_time(old_time):
+            os.environ['SOURCE_DATE_EPOCH'] = old_time
+        self.addCleanup(cleanup_time, os.environ.get('SOURCE_DATE_EPOCH', ''))
+        os.environ['SOURCE_DATE_EPOCH'] = str(int(datetime.fromisoformat(iso8601).timestamp()))
+
+    def set_creator(self, creator):
+        def cleanup_creator(old_creator):
+            os.environ['USER'] = old_creator
+        self.addCleanup(cleanup_creator, os.environ.get('USER', ''))
+        os.environ['USER'] = creator
+
     #
     # Unit test methods
     #
@@ -131,30 +150,46 @@ class DocutilsOdtTestCase(DocutilsTestSupport.StandardTestCase):
     #
 
     def test_odt_basic(self):
+        self.set_creator('dkuhlman')
+        self.set_datetime("2012-08-19T14:36:25+00:00")
         self.process_test('odt_basic.txt', 'odt_basic.odt',
             save_output_name='odt_basic.odt'
             )
 
     def test_odt_nested_class(self):
+        self.set_creator('darklord')
+        self.set_datetime("2015-05-11T14:09:15+00:00")
         self.process_test('odt_nested_class.txt',
                           'odt_nested_class.odt',
                           save_output_name='odt_nested_class.odt'
         )
+
+    def test_odt_unnested_class(self):
+        self.set_creator('darklord')
+        self.set_datetime("2015-05-08T15:37:29+00:00")
         self.process_test('odt_unnested_class.txt',
                           'odt_unnested_class.odt',
                           save_output_name='odt_unnested_class.odt'
         )
+
+    def test_odt_no_class(self):
+        self.set_creator('darklord')
+        self.set_datetime("2015-05-14T19:45:13+00:00")
         self.process_test('odt_no_class.txt',
                           'odt_no_class.odt',
                           save_output_name='odt_no_class.odt'
         )
 
     def test_odt_tables1(self):
+        self.set_creator('dkuhlman')
+        self.set_datetime("2012-08-19T14:36:25+00:00")
         self.process_test('odt_tables1.txt', 'odt_tables1.odt',
             save_output_name='odt_tables1.odt'
             )
 
     def test_odt_custom_headfoot(self):
+        self.set_creator('dkuhlman')
+        self.set_datetime("2012-08-19T14:36:25+00:00")
         settings_overrides = {
             'custom_header': 'Page %p% of %P%',
             'custom_footer': 'Title: %t%  Date: %d3%  Time: %t4%',
@@ -166,24 +201,37 @@ class DocutilsOdtTestCase(DocutilsTestSupport.StandardTestCase):
             )
 
     def test_odt_header_footer(self):
+        self.set_creator('engelbert')
+        self.set_datetime("2019-08-20T12:29:05+00:00")
         self.process_test('odt_header_footer.txt', 'odt_header_footer.odt',
             save_output_name='odt_header_footer.odt'
             )
 
     def test_odt_literal_block(self):
+        self.set_creator('engelbert')
+        self.set_datetime("2019-08-19T21:25:00+00:00")
         self.process_test('odt_literal_block.txt', 'odt_literal_block.odt')
 
     def test_odt_contents(self):
+        self.set_creator('engelbert')
+        self.set_datetime("2019-08-19T21:36:56+00:00")
         self.process_test('odt_contents.txt', 'odt_contents.odt')
 
     def test_odt_classifier(self):
+        self.set_creator('engelbert')
+        self.set_datetime("2019-08-19T21:52:13+00:00")
         self.process_test('odt_classifier.txt', 'odt_classifier.odt')
 
     def test_odt_footnotes(self):
+        self.set_creator('engelbert')
+        self.set_datetime("2019-08-20T11:14:26+00:00")
         self.process_test('odt_footnotes.txt', 'odt_footnotes.odt',
             save_output_name='odt_footnotes.odt'
             )
+
     def test_odt_raw(self):
+        self.set_creator('engelbert')
+        self.set_datetime("2019-08-20T12:42:35+00:00")
         self.process_test('odt_raw.txt', 'odt_raw.odt',
             save_output_name='odt_raw.odt'
             )
