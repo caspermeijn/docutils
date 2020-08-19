@@ -236,6 +236,11 @@ class DocutilsOdtTestCase(DocutilsTestSupport.StandardTestCase):
             save_output_name='odt_raw.odt'
             )
 
+    def test_odt_meta(self):
+        self.set_creator('casper')
+        self.set_datetime("2020-08-19T12:00:19+00:00")
+        self.process_test('odt_meta.txt', 'odt_meta.odt')
+
     #
     # Template for new tests.
     # Also add functional/input/odt_xxxx.txt and

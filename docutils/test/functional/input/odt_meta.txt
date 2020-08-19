@@ -1,0 +1,8 @@
+.. meta::
+   :keywords: reStructuredText, docutils, formatting, multi word keywords, dashed-keywords, www.example.com
+   :description lang=en: A reST document, contains formatted
+       text in a formatted style.
+   :subject: Meta-data test document
+   :classification: Company confidential
+
+Simple text document with metadata.
