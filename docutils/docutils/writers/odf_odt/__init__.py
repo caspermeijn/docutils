@@ -673,8 +673,7 @@ class Writer(writers.Writer):
 
     def write_zip_str(
             self, zfile, name, bytes, compress_type=zipfile.ZIP_DEFLATED):
-        localtime = time.localtime(time.time())
-        zinfo = zipfile.ZipInfo(name, localtime)
+        zinfo = zipfile.ZipInfo(name, utils.document_date())
         # Add some standard UNIX file access permissions (-rw-r--r--).
         zinfo.external_attr = (0x81a4 & 0xFFFF) << 16
         zinfo.compress_type = compress_type
@@ -772,7 +771,7 @@ class Writer(writers.Writer):
         s1 = os.environ.get('USER', '')
         el1 = SubElement(root, 'meta:initial-creator', nsdict=METNSD)
         el1.text = s1
-        s2 = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime())
+        s2 = utils.format_document_date('%Y-%m-%dT%H:%M:%S')
         el1 = SubElement(root, 'meta:creation-date', nsdict=METNSD)
         el1.text = s2
         el1 = SubElement(root, 'dc:creator', nsdict=METNSD)

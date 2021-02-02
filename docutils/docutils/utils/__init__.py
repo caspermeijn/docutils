@@ -14,6 +14,7 @@ import os
 import os.path
 import re
 import itertools
+import time
 import warnings
 import unicodedata
 from docutils import ApplicationError, DataError, __version_info__
@@ -688,6 +689,28 @@ def normalize_language_tag(tag):
             taglist.append('-'.join(base_tag+tags))
     taglist += base_tag
     return taglist
+
+
+def document_date(local_time=True):
+    """Return the document time as a time_struct.
+    If environment variable `SOURCE_DATE_EPOCH` is set, then that value is used as document time.
+    """
+    source_date_epoch = os.environ.get('SOURCE_DATE_EPOCH')
+    if source_date_epoch:
+        return time.gmtime(int(source_date_epoch))
+    else:
+        if local_time:
+            return time.localtime()
+        else:
+            return time.gmtime()
+
+
+def format_document_date(format_str, local_time=True):
+    """Return the formatted document time.
+    If environment variable `SOURCE_DATE_EPOCH` is set, then that value is used as document time.
+    """
+    time_struct = document_date(local_time)
+    return time.strftime(format_str, time_struct)
 
 
 class DependencyList(object):

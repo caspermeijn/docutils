@@ -522,23 +522,8 @@ class Date(Directive):
             except UnicodeEncodeError:
                 raise self.warning(u'Cannot encode date format string '
                     u'with locale encoding "%s".' % locale_encoding)
-        # @@@
-        # Use timestamp from the `SOURCE_DATE_EPOCH`_ environment variable?
-        # Pro: Docutils-generated documentation
-        #      can easily be part of `reproducible software builds`__
-        #
-        #      __ https://reproducible-builds.org/
-        #
-        # Con: Changes the specs, hard to predict behaviour,
-        #
-        # See also the discussion about \date \time \year in TeX
-        # http://tug.org/pipermail/tex-k/2016-May/002704.html
-        # source_date_epoch = os.environ.get('SOURCE_DATE_EPOCH')
-        # if (source_date_epoch):
-        #     text = time.strftime(format_str,
-        #                          time.gmtime(int(source_date_epoch)))
-        # else:
-        text = time.strftime(format_str)
+
+        text = utils.format_document_date(format_str)
         if sys.version_info< (3, 0):
             # `text` is a byte string that may contain non-ASCII characters:
             try:

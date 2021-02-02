@@ -17,7 +17,7 @@ import time
 from docutils.utils.error_reporting import locale_encoding
 
 def suite():
-    s = DocutilsTestSupport.ParserTestSuite()
+    s = DocutilsTestSupport.DateParserTestSuite()
     s.generateTests(totest)
     return s
 
@@ -32,21 +32,21 @@ Today's date is |date|.
 """\
 <document source="test data">
     <substitution_definition names="date">
-        %s
+        2020-02-04
     <paragraph>
         Today's date is \n\
         <substitution_reference refname="date">
             date
         .
-""" % time.strftime('%Y-%m-%d')],
+"""],
 ["""\
 .. |date| date:: %a, %d %b %Y
 """,
 """\
 <document source="test data">
     <substitution_definition names="date">
-        %s
-""" % time.strftime('%a, %d %b %Y')],
+        Tue, 04 Feb 2020
+"""],
 ["""\
 .. date::
 """,

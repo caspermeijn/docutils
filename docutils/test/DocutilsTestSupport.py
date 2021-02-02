@@ -49,6 +49,7 @@ import inspect
 import traceback
 import warnings
 from pprint import pformat
+from datetime import datetime
 
 testroot = os.path.abspath(os.path.dirname(__file__) or os.curdir)
 os.chdir(testroot)
@@ -650,6 +651,34 @@ class SimpleTableParserTestSuite(CustomTestSuite):
                                  input=case[0], expected=case[1],
                                  id='%s[%r][%s]' % (dictname, name, casenum),
                                  run_in_debugger=run_in_debugger)
+
+
+class DateParserTestCase(ParserTestCase):
+
+    """Date-specific parser test case. It sets the source date to 2020-02-04"""
+
+    parser = rst.Parser()
+    """Parser shared by all DateParserTestCases."""
+
+    option_parser = frontend.OptionParser(components=(rst.Parser,))
+    settings = option_parser.get_default_values()
+    settings.report_level = 5
+    settings.halt_level = 5
+    settings.debug = package_unittest.debug
+
+    def test_parser(self):
+        def cleanup_time(old_time):
+            os.environ['SOURCE_DATE_EPOCH'] = old_time
+        self.addCleanup(cleanup_time, os.environ.get('SOURCE_DATE_EPOCH', ''))
+        os.environ['SOURCE_DATE_EPOCH'] = str(int(datetime.fromisoformat("2020-02-04T08:52+00:00").timestamp()))
+
+        super().test_parser()
+
+class DateParserTestSuite(ParserTestSuite):
+
+    """A collection of DateParserTestCases. It sets the source date to 2020-02-04"""
+
+    test_case_class = DateParserTestCase
 
 
 class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
